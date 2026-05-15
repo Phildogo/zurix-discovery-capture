@@ -1,5 +1,5 @@
 {
-  "buildCommand": "",
-  "devCommand": "",
-  "outputDirectory": "."
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/zurix_capture_form.html" }
+  ]
 }
