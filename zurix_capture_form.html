@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zurix Discovery - Session Capture</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            margin: 0;
+            padding: 20px;
+            color: #333;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 600;
+        }
+        .header-meta {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+        .content {
+            padding: 32px;
+        }
+        .controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 32px;
+            padding-bottom: 24px;
+            border-bottom: 2px solid #ecf0f1;
+        }
+        .control-group {
+            display: flex;
+            flex-direction: column;
+        }
+        label {
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: #7f8c8d;
+            margin-bottom: 6px;
+        }
+        input[type="text"],
+        input[type="date"],
+        select {
+            padding: 10px;
+            border: 1px solid #bdc3c7;
+            border-radius: 4px;
+            font-size: 14px;
+            font-family: inherit;
+        }
+        input[type="text"]:focus,
+        input[type="date"]:focus,
+        select:focus {
+            outline: none;
+            border-color: #3498db;
+            background: #ecf7ff;
+        }
+        .team-selector {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .team-btn {
+            padding: 8px 16px;
+            border: 2px solid #bdc3c7;
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+        .team-btn:hover {
+            border-color: #3498db;
+        }
+        .team-btn.active {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+        .team-btn.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .section {
+            margin-bottom: 32px;
+        }
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #ecf0f1;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 20px;
+            background: #3498db;
+            border-radius: 2px;
+        }
+        .section-content {
+            display: grid;
+            gap: 16px;
+            padding-left: 12px;
+        }
+        .field-group {
+            display: grid;
+            gap: 6px;
+        }
+        .field-group label {
+            font-size: 13px;
+        }
+        textarea {
+            padding: 10px;
+            border: 1px solid #bdc3c7;
+            border-radius: 4px;
+            font-size: 13px;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 80px;
+            line-height: 1.5;
+        }
+        textarea:focus {
+            outline: none;
+            border-color: #3498db;
+            background: #ecf7ff;
+        }
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+        .status {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 12px 16px;
+            background: #27ae60;
+            color: white;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .status.show {
+            opacity: 1;
+        }
+        .status.saving {
+            background: #f39c12;
+        }
+        .status.error {
+            background: #e74c3c;
+        }
+        .export-section {
+            margin-top: 32px;
+            padding-top: 24px;
+            border-top: 2px solid #ecf0f1;
+            display: flex;
+            gap: 12px;
+        }
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-primary {
+            background: #3498db;
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #2980b9;
+        }
+        .btn-secondary {
+            background: #ecf0f1;
+            color: #2c3e50;
+            border: 1px solid #bdc3c7;
+        }
+        .btn-secondary:hover {
+            background: #d5dbdb;
+        }
+        .auth-screen {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        .auth-screen.show {
+            display: flex;
+        }
+        .auth-box {
+            background: white;
+            padding: 32px;
+            border-radius: 8px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            max-width: 400px;
+            width: 90%;
+        }
+        .auth-box h2 {
+            margin: 0 0 24px 0;
+            font-size: 20px;
+            color: #2c3e50;
+        }
+        .auth-box .field-group {
+            margin-bottom: 16px;
+        }
+        .auth-box input {
+            width: 100%;
+        }
+        .auth-box .btn {
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-screen" id="authScreen">
+        <div class="auth-box">
+            <h2>Zurix Discovery Capture</h2>
+            <p style="color: #7f8c8d; font-size: 13px; margin-bottom: 20px;">Enter your email and password to access.</p>
+            <div class="field-group">
+                <label>Email</label>
+                <input type="email" id="email" placeholder="your@email.com">
+            </div>
+            <div class="field-group">
+                <label>Password</label>
+                <input type="password" id="password" placeholder="••••••••">
+            </div>
+            <button class="btn btn-primary" onclick="login()" style="width: 100%; margin-top: 12px;">Sign In</button>
+            <p id="authError" style="color: #e74c3c; font-size: 12px; margin-top: 12px; display: none;"></p>
+        </div>
+    </div>
+
+    <div class="container" id="mainContent" style="display: none;">
+        <div class="header">
+            <div>
+                <h1>Zurix Discovery Session Capture</h1>
+                <div class="header-meta" id="lastSaved">Ready to capture...</div>
+            </div>
+            <button class="btn btn-secondary" onclick="logout()">Sign Out</button>
+        </div>
+
+        <div class="content">
+            <div class="controls">
+                <div class="control-group">
+                    <label>Team</label>
+                    <div class="team-selector">
+                        <button class="team-btn active" onclick="selectTeam('admin')">Admin</button>
+                        <button class="team-btn" onclick="selectTeam('service')">Service</button>
+                        <button class="team-btn" onclick="selectTeam('production')">Production</button>
+                        <!-- <button class="team-btn disabled" onclick="selectTeam('sales')" title="Coming in Phase 2">Sales</button> -->
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label>Date</label>
+                    <input type="date" id="sessionDate" onchange="updateSession()">
+                </div>
+                <div class="control-group">
+                    <label>Interviewer(s)</label>
+                    <input type="text" id="interviewer" placeholder="Hal, Kevin" onchange="updateSession()">
+                </div>
+            </div>
+
+            <!-- TEAM STRUCTURE -->
+            <div class="section">
+                <div class="section-title">Team Topology</div>
+                <div class="section-content">
+                    <div class="field-group">
+                        <label>Team Members (names, titles, what they own)</label>
+                        <textarea id="teamMembers" placeholder="E.g., John (Team Lead - manages dispatch), Sarah (Jr. Admin - invoicing), etc." onchange="autosave()"></textarea>
+                    </div>
+                    <div class="two-col">
+                        <div class="field-group">
+                            <label>Team Size / Headcount</label>
+                            <input type="text" id="teamSize" placeholder="E.g., 3 people, 1 FTE contractor" onchange="autosave()">
+                        </div>
+                        <div class="field-group">
+                            <label>Key Dependencies (who they talk to most)</label>
+                            <input type="text" id="keyDependencies" placeholder="E.g., Production, Finance" onchange="autosave()">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CORE WORKFLOW -->
+            <div class="section">
+                <div class="section-title">Core Workflow</div>
+                <div class="section-content">
+                    <div class="field-group">
+                        <label>Typical workflow / job cycle (step-by-step)</label>
+                        <textarea id="workflow" placeholder="1. Job lands in system from sales...&#10;2. We pull the details from...&#10;3. Then we send it to...&#10;etc." onchange="autosave()"></textarea>
+                    </div>
+                    <div class="two-col">
+                        <div class="field-group">
+                            <label>How long does the full cycle take?</label>
+                            <input type="text" id="workflowDuration" placeholder="E.g., 2 hours, 1 day" onchange="autosave()">
+                        </div>
+                        <div class="field-group">
+                            <label>How often does this happen?</label>
+                            <input type="text" id="workflowFrequency" placeholder="E.g., daily, per customer, weekly" onchange="autosave()">
+                        </div>
+                    </div>
+                    <div class="field-group">
+                        <label>Where in the workflow do things slow down or get stuck?</label>
+                        <textarea id="workflowFriction" placeholder="Waiting for info, manual data entry, etc." onchange="autosave()"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TOOLS & TECH -->
+            <div class="section">
+                <div class="section-title">Tools & Technologies</div>
+                <div class="section-content">
+                    <div class="field-group">
+                        <label>Complete list of tools/systems they use</label>
+                        <textarea id="toolsList" placeholder="E.g., Salesforce, Excel, Gmail, Slack, custom app, phone calls, etc." onchange="autosave()"></textarea>
+                    </div>
+                    <div class="field-group">
+                        <label>Integration gaps (where do they manually move data between systems?)</label>
+                        <textarea id="integrationGaps" placeholder="E.g., Have to copy from Salesforce into Excel, no connection between invoice system and accounting, etc." onchange="autosave()"></textarea>
+                    </div>
+                    <div class="field-group">
+                        <label>Tools that are painful or outdated</label>
+                        <textarea id="painfulTools" placeholder="What are they frustrated with?" onchange="autosave()"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PAIN POINTS & BOTTLENECKS -->
+            <div class="section">
+                <div class="section-title">Bottlenecks & Pain Points</div>
+                <div class="section-content">
+                    <div class="field-group">
+                        <label>Top frustrations / biggest time sinks</label>
+                        <textarea id="topFrustrations" placeholder="What do they wish they didn't have to do? What slows them down most?" onchange="autosave()"></textarea>
+                    </div>
+                    <div class="field-group">
+                        <label>Specific pain points (frequency, impact, workarounds)</label>
+                        <textarea id="painPoints" placeholder="E.g., Manual data entry happens 5x/day, takes 30 min total, causes rework when info changes, currently using Excel as workaround" onchange="autosave()"></textarea>
+                    </div>
+                    <div class="field-group">
+                        <label>Where does this impact other teams?</label>
+                        <textarea id="crossTeamImpact" placeholder="E.g., Admin delays slow down Production's ability to dispatch, etc." onchange="autosave()"></textarea>
+                    </div>
+                    <div class="field-group">
+                        <label>Lost information / visibility issues</label>
+                        <textarea id="visibilityIssues" placeholder="E.g., Don't know job status until they ask, info scattered across 3 systems, etc." onchange="autosave()"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- WORKAROUNDS -->
+            <div class="section">
+                <div class="section-title">Current Workarounds & Band-Aids</div>
+                <div class="section-content">
+                    <div class="field-group">
+                        <label>How are they currently working around the problems?</label>
+                        <textarea id="workarounds" placeholder="E.g., Using personal spreadsheets, calling each other, manual tracking systems, etc." onchange="autosave()"></textarea>
+                    </div>
+                    <div class="field-group">
+                        <label>Tribal knowledge (who knows how to do the weird workaround? What if they're not around?)</label>
+                        <textarea id="tribalKnowledge" placeholder="" onchange="autosave()"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ADDITIONAL NOTES -->
+            <div class="section">
+                <div class="section-title">Additional Notes</div>
+                <div class="section-content">
+                    <div class="field-group">
+                        <label>Anything else that stood out? Opportunities? Constraints?</label>
+                        <textarea id="additionalNotes" placeholder="General observations, mood/attitude, appetite for change, etc." onchange="autosave()"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="export-section">
+                <button class="btn btn-primary" onclick="exportJSON()">📥 Download Session Notes (JSON)</button>
+                <button class="btn btn-secondary" onclick="exportMarkdown()">📄 Download as Markdown</button>
+                <button class="btn btn-secondary" onclick="clearForm()">Clear Form</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="status" id="status"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        const SUPABASE_URL = 'https://cvgjunvwufbineqhxugq.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_fdsW1ci00iSwJ4G18UCFVA_JUC5wy2e';
+        let supabase;
+        let currentUser = null;
+        let currentTeam = 'admin';
+        let currentSessionId = null;
+        let sessionData = {};
+        let saveTimeout;
+
+        // Initialize Supabase
+        try {
+            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        } catch (e) {
+            console.log('Supabase initialization note: Add your credentials to the script.');
+        }
+
+        // Check auth on load
+        window.addEventListener('load', async () => {
+            const session = await supabase?.auth.getSession();
+            if (session?.data?.session) {
+                currentUser = session.data.session.user;
+                showMainContent();
+                document.getElementById('sessionDate').valueAsDate = new Date();
+                loadSession();
+            } else {
+                document.getElementById('authScreen').classList.add('show');
+            }
+        });
+
+        async function login() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            if (!email || !password) {
+                showError('Please enter email and password');
+                return;
+            }
+
+            try {
+                const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+                if (error) throw error;
+                
+                currentUser = data.user;
+                showMainContent();
+                document.getElementById('sessionDate').valueAsDate = new Date();
+                loadSession();
+            } catch (error) {
+                showError(error.message);
+            }
+        }
+
+        async function logout() {
+            await supabase.auth.signOut();
+            currentUser = null;
+            location.reload();
+        }
+
+        function showMainContent() {
+            document.getElementById('authScreen').classList.remove('show');
+            document.getElementById('mainContent').style.display = 'block';
+        }
+
+        function showError(msg) {
+            const el = document.getElementById('authError');
+            el.textContent = msg;
+            el.style.display = 'block';
+            setTimeout(() => { el.style.display = 'none'; }, 5000);
+        }
+
+        function selectTeam(team) {
+            currentTeam = team;
+            document.querySelectorAll('.team-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            loadSession();
+        }
+
+        function updateSession() {
+            clearTimeout(saveTimeout);
+            saveTimeout = setTimeout(autosave, 500);
+        }
+
+        async function loadSession() {
+            const date = document.getElementById('sessionDate').value;
+            const key = `${currentTeam}-${date}`;
+            
+            try {
+                const { data, error } = await supabase
+                    .from('discovery_sessions')
+                    .select('*')
+                    .eq('team', currentTeam)
+                    .eq('session_date', date)
+                    .single();
+
+                if (data) {
+                    sessionData = data.data || {};
+                    populateForm();
+                    currentSessionId = data.id;
+                }
+            } catch (e) {
+                currentSessionId = null;
+                clearFormFields();
+            }
+        }
+
+        function populateForm() {
+            Object.keys(sessionData).forEach(key => {
+                const el = document.getElementById(key);
+                if (el) el.value = sessionData[key];
+            });
+        }
+
+        function clearFormFields() {
+            document.querySelectorAll('textarea, input[type="text"]').forEach(el => {
+                if (el.id !== 'sessionDate' && el.id !== 'email' && el.id !== 'password') {
+                    el.value = '';
+                }
+            });
+        }
+
+        async function autosave() {
+            const date = document.getElementById('sessionDate').value;
+            const interviewer = document.getElementById('interviewer').value;
+            
+            sessionData = {
+                teamMembers: document.getElementById('teamMembers').value,
+                teamSize: document.getElementById('teamSize').value,
+                keyDependencies: document.getElementById('keyDependencies').value,
+                workflow: document.getElementById('workflow').value,
+                workflowDuration: document.getElementById('workflowDuration').value,
+                workflowFrequency: document.getElementById('workflowFrequency').value,
+                workflowFriction: document.getElementById('workflowFriction').value,
+                toolsList: document.getElementById('toolsList').value,
+                integrationGaps: document.getElementById('integrationGaps').value,
+                painfulTools: document.getElementById('painfulTools').value,
+                topFrustrations: document.getElementById('topFrustrations').value,
+                painPoints: document.getElementById('painPoints').value,
+                crossTeamImpact: document.getElementById('crossTeamImpact').value,
+                visibilityIssues: document.getElementById('visibilityIssues').value,
+                workarounds: document.getElementById('workarounds').value,
+                tribalKnowledge: document.getElementById('tribalKnowledge').value,
+                additionalNotes: document.getElementById('additionalNotes').value
+            };
+
+            showStatus('Saving...', 'saving');
+
+            try {
+                if (currentSessionId) {
+                    await supabase
+                        .from('discovery_sessions')
+                        .update({ data: sessionData, updated_at: new Date() })
+                        .eq('id', currentSessionId);
+                } else {
+                    const { data } = await supabase
+                        .from('discovery_sessions')
+                        .insert({
+                            team: currentTeam,
+                            session_date: date,
+                            interviewer: interviewer,
+                            user_id: currentUser.id,
+                            data: sessionData
+                        })
+                        .select();
+                    
+                    if (data?.[0]) currentSessionId = data[0].id;
+                }
+
+                showStatus('Saved', 'success');
+                document.getElementById('lastSaved').textContent = `Last saved: ${new Date().toLocaleTimeString()}`;
+            } catch (error) {
+                showStatus('Error saving', 'error');
+                console.error(error);
+            }
+        }
+
+        function showStatus(msg, type = 'success') {
+            const el = document.getElementById('status');
+            el.textContent = msg;
+            el.className = 'status show ' + type;
+            if (type === 'success') {
+                setTimeout(() => el.classList.remove('show'), 3000);
+            }
+        }
+
+        function exportJSON() {
+            const date = document.getElementById('sessionDate').value;
+            const data = {
+                team: currentTeam,
+                date: date,
+                interviewer: document.getElementById('interviewer').value,
+                sessionData: sessionData
+            };
+            download(JSON.stringify(data, null, 2), `zurix-${currentTeam}-${date}.json`);
+        }
+
+        function exportMarkdown() {
+            const date = document.getElementById('sessionDate').value;
+            const md = `# Zurix Discovery Session - ${currentTeam.toUpperCase()}
+**Date:** ${date}
+**Interviewer(s):** ${document.getElementById('interviewer').value}
+
+## Team Topology
+${sessionData.teamMembers}
+
+**Team Size:** ${sessionData.teamSize}
+**Key Dependencies:** ${sessionData.keyDependencies}
+
+## Core Workflow
+${sessionData.workflow}
+
+**Duration:** ${sessionData.workflowDuration}
+**Frequency:** ${sessionData.workflowFrequency}
+
+**Friction Points:**
+${sessionData.workflowFriction}
+
+## Tools & Technologies
+${sessionData.toolsList}
+
+**Integration Gaps:**
+${sessionData.integrationGaps}
+
+**Painful Tools:**
+${sessionData.painfulTools}
+
+## Bottlenecks & Pain Points
+**Top Frustrations:**
+${sessionData.topFrustrations}
+
+**Specific Pain Points:**
+${sessionData.painPoints}
+
+**Cross-Team Impact:**
+${sessionData.crossTeamImpact}
+
+**Visibility Issues:**
+${sessionData.visibilityIssues}
+
+## Current Workarounds
+${sessionData.workarounds}
+
+**Tribal Knowledge:**
+${sessionData.tribalKnowledge}
+
+## Additional Notes
+${sessionData.additionalNotes}
+`;
+            download(md, `zurix-${currentTeam}-${date}.md`);
+        }
+
+        function download(content, filename) {
+            const blob = new Blob([content], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function clearForm() {
+            if (confirm('Clear all fields for this session?')) {
+                clearFormFields();
+                autosave();
+            }
+        }
+    </script>
+</body>
+</html>
