@@ -102,10 +102,6 @@
             color: white;
             border-color: #3498db;
         }
-        .team-btn.disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
         .section {
             margin-bottom: 32px;
         }
@@ -263,7 +259,7 @@
                 <label>Password</label>
                 <input type="password" id="password" placeholder="••••••••">
             </div>
-            <button class="btn btn-primary" onclick="login()" style="width: 100%; margin-top: 12px;">Sign In</button>
+            <button class="btn btn-primary" onclick="handleLogin()" style="width: 100%; margin-top: 12px;">Sign In</button>
             <p id="authError" style="color: #e74c3c; font-size: 12px; margin-top: 12px; display: none;"></p>
         </div>
     </div>
@@ -274,7 +270,7 @@
                 <h1>Zurix Discovery Session Capture</h1>
                 <div class="header-meta" id="lastSaved">Ready to capture...</div>
             </div>
-            <button class="btn btn-secondary" onclick="logout()">Sign Out</button>
+            <button class="btn btn-secondary" onclick="handleLogout()">Sign Out</button>
         </div>
 
         <div class="content">
@@ -285,7 +281,6 @@
                         <button class="team-btn active" onclick="selectTeam('admin')">Admin</button>
                         <button class="team-btn" onclick="selectTeam('service')">Service</button>
                         <button class="team-btn" onclick="selectTeam('production')">Production</button>
-                        <!-- <button class="team-btn disabled" onclick="selectTeam('sales')" title="Coming in Phase 2">Sales</button> -->
                     </div>
                 </div>
                 <div class="control-group">
@@ -298,7 +293,6 @@
                 </div>
             </div>
 
-            <!-- TEAM STRUCTURE -->
             <div class="section">
                 <div class="section-title">Team Topology</div>
                 <div class="section-content">
@@ -319,7 +313,6 @@
                 </div>
             </div>
 
-            <!-- CORE WORKFLOW -->
             <div class="section">
                 <div class="section-title">Core Workflow</div>
                 <div class="section-content">
@@ -344,7 +337,6 @@
                 </div>
             </div>
 
-            <!-- TOOLS & TECH -->
             <div class="section">
                 <div class="section-title">Tools & Technologies</div>
                 <div class="section-content">
@@ -363,7 +355,6 @@
                 </div>
             </div>
 
-            <!-- PAIN POINTS & BOTTLENECKS -->
             <div class="section">
                 <div class="section-title">Bottlenecks & Pain Points</div>
                 <div class="section-content">
@@ -386,7 +377,6 @@
                 </div>
             </div>
 
-            <!-- WORKAROUNDS -->
             <div class="section">
                 <div class="section-title">Current Workarounds & Band-Aids</div>
                 <div class="section-content">
@@ -401,7 +391,6 @@
                 </div>
             </div>
 
-            <!-- ADDITIONAL NOTES -->
             <div class="section">
                 <div class="section-title">Additional Notes</div>
                 <div class="section-content">
@@ -426,44 +415,42 @@
     <script>
         const SUPABASE_URL = 'https://cvgjunvwufbineqhxugq.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_fdsW1ci00iSwJ4G18UCFVA_JUC5wy2e';
-        let supabase;
+        let sbClient;
         let currentUser = null;
         let currentTeam = 'admin';
         let currentSessionId = null;
         let sessionData = {};
         let saveTimeout;
 
-        // Initialize Supabase
-        try {
-            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-        } catch (e) {
-            console.log('Supabase initialization note: Add your credentials to the script.');
-        }
+        sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        // Check auth on load
         window.addEventListener('load', async () => {
-            const session = await supabase?.auth.getSession();
-            if (session?.data?.session) {
-                currentUser = session.data.session.user;
-                showMainContent();
-                document.getElementById('sessionDate').valueAsDate = new Date();
-                loadSession();
-            } else {
-                document.getElementById('authScreen').classList.add('show');
+            try {
+                const session = await sbClient.auth.getSession();
+                if (session?.data?.session) {
+                    currentUser = session.data.session.user;
+                    showMainContent();
+                    document.getElementById('sessionDate').valueAsDate = new Date();
+                    loadSession();
+                } else {
+                    document.getElementById('authScreen').classList.add('show');
+                }
+            } catch (e) {
+                console.error('Auth check error:', e);
             }
         });
 
-        async function login() {
+        async function handleLogin() {
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
             
             if (!email || !password) {
-                showError('Please enter email and password');
+                showAuthError('Please enter email and password');
                 return;
             }
 
             try {
-                const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+                const { data, error } = await sbClient.auth.signInWithPassword({ email, password });
                 if (error) throw error;
                 
                 currentUser = data.user;
@@ -471,12 +458,12 @@
                 document.getElementById('sessionDate').valueAsDate = new Date();
                 loadSession();
             } catch (error) {
-                showError(error.message);
+                showAuthError(error.message);
             }
         }
 
-        async function logout() {
-            await supabase.auth.signOut();
+        async function handleLogout() {
+            await sbClient.auth.signOut();
             currentUser = null;
             location.reload();
         }
@@ -486,7 +473,7 @@
             document.getElementById('mainContent').style.display = 'block';
         }
 
-        function showError(msg) {
+        function showAuthError(msg) {
             const el = document.getElementById('authError');
             el.textContent = msg;
             el.style.display = 'block';
@@ -507,10 +494,9 @@
 
         async function loadSession() {
             const date = document.getElementById('sessionDate').value;
-            const key = `${currentTeam}-${date}`;
             
             try {
-                const { data, error } = await supabase
+                const { data, error } = await sbClient
                     .from('discovery_sessions')
                     .select('*')
                     .eq('team', currentTeam)
@@ -571,12 +557,12 @@
 
             try {
                 if (currentSessionId) {
-                    await supabase
+                    await sbClient
                         .from('discovery_sessions')
                         .update({ data: sessionData, updated_at: new Date() })
                         .eq('id', currentSessionId);
                 } else {
-                    const { data } = await supabase
+                    const { data } = await sbClient
                         .from('discovery_sessions')
                         .insert({
                             team: currentTeam,
