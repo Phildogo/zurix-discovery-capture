@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
     <title>Zurix Discovery - Session Capture</title>
     <style>
         * {
@@ -172,12 +173,6 @@
         .status.show {
             opacity: 1;
         }
-        .status.saving {
-            background: #f39c12;
-        }
-        .status.error {
-            background: #e74c3c;
-        }
         .export-section {
             margin-top: 32px;
             padding-top: 24px;
@@ -209,68 +204,15 @@
         .btn-secondary:hover {
             background: #d5dbdb;
         }
-        .auth-screen {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-        }
-        .auth-screen.show {
-            display: flex;
-        }
-        .auth-box {
-            background: white;
-            padding: 32px;
-            border-radius: 8px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-            max-width: 400px;
-            width: 90%;
-        }
-        .auth-box h2 {
-            margin: 0 0 24px 0;
-            font-size: 20px;
-            color: #2c3e50;
-        }
-        .auth-box .field-group {
-            margin-bottom: 16px;
-        }
-        .auth-box input {
-            width: 100%;
-        }
-        .auth-box .btn {
-            width: 100%;
-        }
     </style>
 </head>
 <body>
-    <div class="auth-screen" id="authScreen">
-        <div class="auth-box">
-            <h2>Zurix Discovery Capture</h2>
-            <p style="color: #7f8c8d; font-size: 13px; margin-bottom: 20px;">Enter your email and password to access.</p>
-            <div class="field-group">
-                <label>Email</label>
-                <input type="email" id="email" placeholder="your@email.com">
-            </div>
-            <div class="field-group">
-                <label>Password</label>
-                <input type="password" id="password" placeholder="••••••••">
-            </div>
-            <button class="btn btn-primary" onclick="handleLogin()" style="width: 100%; margin-top: 12px;">Sign In</button>
-            <p id="authError" style="color: #e74c3c; font-size: 12px; margin-top: 12px; display: none;"></p>
-        </div>
-    </div>
-
-    <div class="container" id="mainContent" style="display: none;">
+    <div class="container">
         <div class="header">
             <div>
                 <h1>Zurix Discovery Session Capture</h1>
                 <div class="header-meta" id="lastSaved">Ready to capture...</div>
             </div>
-            <button class="btn btn-secondary" onclick="handleLogout()">Sign Out</button>
         </div>
 
         <div class="content">
@@ -411,80 +353,19 @@
 
     <div class="status" id="status"></div>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        const SUPABASE_URL = 'https://cvgjunvwufbineqhxugq.supabase.co';
-        const SUPABASE_KEY = 'sb_publishable_fdsW1ci00iSwJ4G18UCFVA_JUC5wy2e';
-        let sbClient;
-        let currentUser = null;
         let currentTeam = 'admin';
-        let currentSessionId = null;
         let sessionData = {};
         let saveTimeout;
 
-        sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-        window.addEventListener('load', async () => {
-            try {
-                const session = await sbClient.auth.getSession();
-                if (session?.data?.session) {
-                    currentUser = session.data.session.user;
-                    showMainContent();
-                    document.getElementById('sessionDate').valueAsDate = new Date();
-                    loadSession();
-                } else {
-                    document.getElementById('authScreen').classList.add('show');
-                }
-            } catch (e) {
-                console.error('Auth check error:', e);
-            }
+        window.addEventListener('load', () => {
+            document.getElementById('sessionDate').valueAsDate = new Date();
         });
-
-        async function handleLogin() {
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            
-            if (!email || !password) {
-                showAuthError('Please enter email and password');
-                return;
-            }
-
-            try {
-                const { data, error } = await sbClient.auth.signInWithPassword({ email, password });
-                if (error) throw error;
-                
-                currentUser = data.user;
-                showMainContent();
-                document.getElementById('sessionDate').valueAsDate = new Date();
-                loadSession();
-            } catch (error) {
-                showAuthError(error.message);
-            }
-        }
-
-        async function handleLogout() {
-            await sbClient.auth.signOut();
-            currentUser = null;
-            location.reload();
-        }
-
-        function showMainContent() {
-            document.getElementById('authScreen').classList.remove('show');
-            document.getElementById('mainContent').style.display = 'block';
-        }
-
-        function showAuthError(msg) {
-            const el = document.getElementById('authError');
-            el.textContent = msg;
-            el.style.display = 'block';
-            setTimeout(() => { el.style.display = 'none'; }, 5000);
-        }
 
         function selectTeam(team) {
             currentTeam = team;
             document.querySelectorAll('.team-btn').forEach(btn => btn.classList.remove('active'));
             event.target.classList.add('active');
-            loadSession();
         }
 
         function updateSession() {
@@ -492,48 +373,8 @@
             saveTimeout = setTimeout(autosave, 500);
         }
 
-        async function loadSession() {
-            const date = document.getElementById('sessionDate').value;
-            
-            try {
-                const { data, error } = await sbClient
-                    .from('discovery_sessions')
-                    .select('*')
-                    .eq('team', currentTeam)
-                    .eq('session_date', date)
-                    .single();
-
-                if (data) {
-                    sessionData = data.data || {};
-                    populateForm();
-                    currentSessionId = data.id;
-                }
-            } catch (e) {
-                currentSessionId = null;
-                clearFormFields();
-            }
-        }
-
-        function populateForm() {
-            Object.keys(sessionData).forEach(key => {
-                const el = document.getElementById(key);
-                if (el) el.value = sessionData[key];
-            });
-        }
-
-        function clearFormFields() {
-            document.querySelectorAll('textarea, input[type="text"]').forEach(el => {
-                if (el.id !== 'sessionDate' && el.id !== 'email' && el.id !== 'password') {
-                    el.value = '';
-                }
-            });
-        }
-
         async function autosave() {
-            const date = document.getElementById('sessionDate').value;
-            const interviewer = document.getElementById('interviewer').value;
-            
-            sessionData = {
+            const data = {
                 teamMembers: document.getElementById('teamMembers').value,
                 teamSize: document.getElementById('teamSize').value,
                 keyDependencies: document.getElementById('keyDependencies').value,
@@ -553,44 +394,20 @@
                 additionalNotes: document.getElementById('additionalNotes').value
             };
 
-            showStatus('Saving...', 'saving');
-
             try {
-                if (currentSessionId) {
-                    await sbClient
-                        .from('discovery_sessions')
-                        .update({ data: sessionData, updated_at: new Date() })
-                        .eq('id', currentSessionId);
-                } else {
-                    const { data } = await sbClient
-                        .from('discovery_sessions')
-                        .insert({
-                            team: currentTeam,
-                            session_date: date,
-                            interviewer: interviewer,
-                            user_id: currentUser.id,
-                            data: sessionData
-                        })
-                        .select();
-                    
-                    if (data?.[0]) currentSessionId = data[0].id;
-                }
-
-                showStatus('Saved', 'success');
+                localStorage.setItem(`zurix_${currentTeam}_${document.getElementById('sessionDate').value}`, JSON.stringify(data));
+                showStatus('Saved locally');
                 document.getElementById('lastSaved').textContent = `Last saved: ${new Date().toLocaleTimeString()}`;
-            } catch (error) {
-                showStatus('Error saving', 'error');
-                console.error(error);
+            } catch (e) {
+                console.log('Local storage full or unavailable');
             }
         }
 
-        function showStatus(msg, type = 'success') {
+        function showStatus(msg) {
             const el = document.getElementById('status');
             el.textContent = msg;
-            el.className = 'status show ' + type;
-            if (type === 'success') {
-                setTimeout(() => el.classList.remove('show'), 3000);
-            }
+            el.classList.add('show');
+            setTimeout(() => el.classList.remove('show'), 3000);
         }
 
         function exportJSON() {
@@ -599,7 +416,25 @@
                 team: currentTeam,
                 date: date,
                 interviewer: document.getElementById('interviewer').value,
-                sessionData: sessionData
+                sessionData: {
+                    teamMembers: document.getElementById('teamMembers').value,
+                    teamSize: document.getElementById('teamSize').value,
+                    keyDependencies: document.getElementById('keyDependencies').value,
+                    workflow: document.getElementById('workflow').value,
+                    workflowDuration: document.getElementById('workflowDuration').value,
+                    workflowFrequency: document.getElementById('workflowFrequency').value,
+                    workflowFriction: document.getElementById('workflowFriction').value,
+                    toolsList: document.getElementById('toolsList').value,
+                    integrationGaps: document.getElementById('integrationGaps').value,
+                    painfulTools: document.getElementById('painfulTools').value,
+                    topFrustrations: document.getElementById('topFrustrations').value,
+                    painPoints: document.getElementById('painPoints').value,
+                    crossTeamImpact: document.getElementById('crossTeamImpact').value,
+                    visibilityIssues: document.getElementById('visibilityIssues').value,
+                    workarounds: document.getElementById('workarounds').value,
+                    tribalKnowledge: document.getElementById('tribalKnowledge').value,
+                    additionalNotes: document.getElementById('additionalNotes').value
+                }
             };
             download(JSON.stringify(data, null, 2), `zurix-${currentTeam}-${date}.json`);
         }
@@ -611,50 +446,50 @@
 **Interviewer(s):** ${document.getElementById('interviewer').value}
 
 ## Team Topology
-${sessionData.teamMembers}
+${document.getElementById('teamMembers').value}
 
-**Team Size:** ${sessionData.teamSize}
-**Key Dependencies:** ${sessionData.keyDependencies}
+**Team Size:** ${document.getElementById('teamSize').value}
+**Key Dependencies:** ${document.getElementById('keyDependencies').value}
 
 ## Core Workflow
-${sessionData.workflow}
+${document.getElementById('workflow').value}
 
-**Duration:** ${sessionData.workflowDuration}
-**Frequency:** ${sessionData.workflowFrequency}
+**Duration:** ${document.getElementById('workflowDuration').value}
+**Frequency:** ${document.getElementById('workflowFrequency').value}
 
 **Friction Points:**
-${sessionData.workflowFriction}
+${document.getElementById('workflowFriction').value}
 
 ## Tools & Technologies
-${sessionData.toolsList}
+${document.getElementById('toolsList').value}
 
 **Integration Gaps:**
-${sessionData.integrationGaps}
+${document.getElementById('integrationGaps').value}
 
 **Painful Tools:**
-${sessionData.painfulTools}
+${document.getElementById('painfulTools').value}
 
 ## Bottlenecks & Pain Points
 **Top Frustrations:**
-${sessionData.topFrustrations}
+${document.getElementById('topFrustrations').value}
 
 **Specific Pain Points:**
-${sessionData.painPoints}
+${document.getElementById('painPoints').value}
 
 **Cross-Team Impact:**
-${sessionData.crossTeamImpact}
+${document.getElementById('crossTeamImpact').value}
 
 **Visibility Issues:**
-${sessionData.visibilityIssues}
+${document.getElementById('visibilityIssues').value}
 
 ## Current Workarounds
-${sessionData.workarounds}
+${document.getElementById('workarounds').value}
 
 **Tribal Knowledge:**
-${sessionData.tribalKnowledge}
+${document.getElementById('tribalKnowledge').value}
 
 ## Additional Notes
-${sessionData.additionalNotes}
+${document.getElementById('additionalNotes').value}
 `;
             download(md, `zurix-${currentTeam}-${date}.md`);
         }
@@ -671,7 +506,9 @@ ${sessionData.additionalNotes}
 
         function clearForm() {
             if (confirm('Clear all fields for this session?')) {
-                clearFormFields();
+                document.querySelectorAll('textarea, input[type="text"]').forEach(el => {
+                    if (el.id !== 'sessionDate') el.value = '';
+                });
                 autosave();
             }
         }
