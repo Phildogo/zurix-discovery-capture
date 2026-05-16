@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,7 +8,6 @@
         * {
             box-sizing: border-box;
         }
-
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
@@ -18,16 +16,14 @@
             color: #333;
             min-height: 100vh;
         }
-
         .container {
             max-width: 900px;
             margin: 0 auto;
             background: white;
             border-radius: 8px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
             overflow: hidden;
         }
-
         .header {
             background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
             color: white;
@@ -36,22 +32,18 @@
             justify-content: space-between;
             align-items: center;
         }
-
         .header h1 {
             margin: 0;
             font-size: 24px;
             font-weight: 600;
         }
-
         .header-meta {
             font-size: 12px;
             opacity: 0.9;
         }
-
         .content {
             padding: 32px;
         }
-
         .controls {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
@@ -60,12 +52,10 @@
             padding-bottom: 24px;
             border-bottom: 2px solid #ecf0f1;
         }
-
         .control-group {
             display: flex;
             flex-direction: column;
         }
-
         label {
             font-size: 12px;
             font-weight: 600;
@@ -73,7 +63,6 @@
             color: #7f8c8d;
             margin-bottom: 6px;
         }
-
         input[type="text"],
         input[type="date"],
         select {
@@ -83,7 +72,6 @@
             font-size: 14px;
             font-family: inherit;
         }
-
         input[type="text"]:focus,
         input[type="date"]:focus,
         select:focus {
@@ -91,13 +79,11 @@
             border-color: #3498db;
             background: #ecf7ff;
         }
-
         .team-selector {
             display: flex;
             gap: 8px;
             flex-wrap: wrap;
         }
-
         .team-btn {
             padding: 8px 16px;
             border: 2px solid #bdc3c7;
@@ -108,21 +94,17 @@
             font-size: 13px;
             transition: all 0.2s;
         }
-
         .team-btn:hover {
             border-color: #3498db;
         }
-
         .team-btn.active {
             background: #3498db;
             color: white;
             border-color: #3498db;
         }
-
         .section {
             margin-bottom: 32px;
         }
-
         .section-title {
             font-size: 16px;
             font-weight: 600;
@@ -134,7 +116,6 @@
             align-items: center;
             gap: 8px;
         }
-
         .section-title::before {
             content: '';
             width: 4px;
@@ -142,22 +123,18 @@
             background: #3498db;
             border-radius: 2px;
         }
-
         .section-content {
             display: grid;
             gap: 16px;
             padding-left: 12px;
         }
-
         .field-group {
             display: grid;
             gap: 6px;
         }
-
         .field-group label {
             font-size: 13px;
         }
-
         textarea {
             padding: 10px;
             border: 1px solid #bdc3c7;
@@ -168,19 +145,16 @@
             min-height: 80px;
             line-height: 1.5;
         }
-
         textarea:focus {
             outline: none;
             border-color: #3498db;
             background: #ecf7ff;
         }
-
         .two-col {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 16px;
         }
-
         .status {
             position: fixed;
             bottom: 20px;
@@ -191,31 +165,27 @@
             border-radius: 4px;
             font-size: 12px;
             font-weight: 500;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             opacity: 0;
             transition: opacity 0.3s;
         }
-
         .status.show {
             opacity: 1;
         }
-
         .status.saving {
             background: #f39c12;
         }
-
         .status.error {
             background: #e74c3c;
         }
-
         .export-section {
             margin-top: 32px;
             padding-top: 24px;
             border-top: 2px solid #ecf0f1;
             display: flex;
             gap: 12px;
+            flex-wrap: wrap;
         }
-
         .btn {
             padding: 10px 20px;
             border: none;
@@ -225,75 +195,175 @@
             cursor: pointer;
             transition: all 0.2s;
         }
-
         .btn-primary {
             background: #3498db;
             color: white;
         }
-
         .btn-primary:hover {
             background: #2980b9;
         }
-
         .btn-secondary {
             background: #ecf0f1;
             color: #2c3e50;
             border: 1px solid #bdc3c7;
         }
-
         .btn-secondary:hover {
             background: #d5dbdb;
         }
-
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+        .btn-danger:hover {
+            background: #c0392b;
+        }
         .auth-screen {
             position: fixed;
             inset: 0;
-            background: rgba(0, 0, 0, 0.5);
+            background: rgba(0,0,0,0.5);
             align-items: center;
             justify-content: center;
             z-index: 1000;
             display: none;
         }
-
         .auth-screen.show {
             display: flex;
         }
-
         .auth-box {
             background: white;
             padding: 32px;
             border-radius: 8px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
             max-width: 400px;
             width: 90%;
         }
-
         .auth-box h2 {
             margin: 0 0 24px 0;
             font-size: 20px;
             color: #2c3e50;
         }
-
         .auth-box .field-group {
             margin-bottom: 16px;
         }
-
         .auth-box input {
             width: 100%;
         }
-
         .auth-box .btn {
             width: 100%;
         }
+        
+        /* Workflow Cards Styles */
+        .workflow-cards {
+            display: grid;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+        .workflow-card {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 6px;
+            padding: 16px;
+            transition: all 0.2s;
+            cursor: grab;
+        }
+        .workflow-card.dragging {
+            opacity: 0.5;
+            background: #e3f2fd;
+        }
+        .workflow-card.drag-over {
+            border: 2px dashed #3498db;
+            background: #ecf7ff;
+        }
+        .workflow-card:hover {
+            border-color: #3498db;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .workflow-card-header {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .workflow-handle {
+            color: #bdc3c7;
+            font-size: 16px;
+            cursor: grab;
+            flex-shrink: 0;
+        }
+        .workflow-handle:active {
+            cursor: grabbing;
+        }
+        .workflow-name {
+            font-weight: 600;
+            color: #2c3e50;
+            flex: 1;
+        }
+        .workflow-delete {
+            background: none;
+            border: none;
+            color: #e74c3c;
+            cursor: pointer;
+            font-size: 16px;
+            padding: 0;
+            flex-shrink: 0;
+        }
+        .workflow-delete:hover {
+            color: #c0392b;
+        }
+        .workflow-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 12px;
+        }
+        .workflow-card-field {
+            display: grid;
+            gap: 4px;
+        }
+        .workflow-card-field label {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: #7f8c8d;
+        }
+        .workflow-card-field input,
+        .workflow-card-field textarea {
+            padding: 8px;
+            border: 1px solid #bdc3c7;
+            border-radius: 3px;
+            font-size: 12px;
+        }
+        .workflow-card-field textarea {
+            grid-column: 1 / -1;
+            min-height: 60px;
+        }
+        .add-workflow-btn {
+            width: 100%;
+            text-align: left;
+            padding: 12px 16px;
+            background: #ecf0f1;
+            border: 2px dashed #bdc3c7;
+            border-radius: 6px;
+            color: #3498db;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .add-workflow-btn:hover {
+            background: #d5dbdb;
+            border-color: #3498db;
+        }
     </style>
 </head>
-
 <body>
     <div class="auth-screen show" id="authScreen">
         <div class="auth-box">
             <h2>Zurix Discovery Capture</h2>
-            <p style="color: #7f8c8d; font-size: 13px; margin-bottom: 20px;">Enter your email and password to access.
-            </p>
+            <p style="color: #7f8c8d; font-size: 13px; margin-bottom: 20px;">Enter your email and password to access.</p>
             <div class="field-group">
                 <label>Email</label>
                 <input type="email" id="email" placeholder="your@email.com">
@@ -302,8 +372,7 @@
                 <label>Password</label>
                 <input type="password" id="password" placeholder="••••••••">
             </div>
-            <button class="btn btn-primary" onclick="handleLogin()" style="width: 100%; margin-top: 12px;">Sign
-                In</button>
+            <button class="btn btn-primary" onclick="handleLogin()" style="width: 100%; margin-top: 12px;">Sign In</button>
             <p id="authError" style="color: #e74c3c; font-size: 12px; margin-top: 12px; display: none;"></p>
         </div>
     </div>
@@ -342,50 +411,96 @@
                 <div class="section-content">
                     <div class="field-group">
                         <label>Team Members (names, titles, what they own)</label>
-                        <textarea id="teamMembers"
-                            placeholder="E.g., John (Team Lead - manages dispatch), Sarah (Jr. Admin - invoicing), etc."
-                            onchange="autosave()"></textarea>
+                        <textarea id="teamMembers" placeholder="E.g., John (Team Lead - manages dispatch), Sarah (Jr. Admin - invoicing), etc." onchange="autosave()"></textarea>
                     </div>
                     <div class="two-col">
                         <div class="field-group">
                             <label>Team Size / Headcount</label>
-                            <input type="text" id="teamSize" placeholder="E.g., 3 people, 1 FTE contractor"
-                                onchange="autosave()">
+                            <input type="text" id="teamSize" placeholder="E.g., 3 people, 1 FTE contractor" onchange="autosave()">
                         </div>
                         <div class="field-group">
                             <label>Key Dependencies (who they talk to most)</label>
-                            <input type="text" id="keyDependencies" placeholder="E.g., Production, Finance"
-                                onchange="autosave()">
+                            <input type="text" id="keyDependencies" placeholder="E.g., Production, Finance" onchange="autosave()">
                         </div>
                     </div>
                 </div>
             </div>
 
             <div class="section">
-                <div class="section-title">Core Workflow</div>
+                <div class="section-title">Core Workflows</div>
+                <div class="section-content">
+                    <p style="color: #7f8c8d; font-size: 13px; margin: 0 0 16px 0;">Add each workflow they manage. Drag to reorder by importance.</p>
+                    <div class="workflow-cards" id="workflowCards"></div>
+                    <button class="add-workflow-btn" onclick="addWorkflow()">+ Add Workflow</button>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Hidden / Invisible Work</div>
                 <div class="section-content">
                     <div class="field-group">
-                        <label>Typical workflow / job cycle (step-by-step)</label>
-                        <textarea id="workflow"
-                            placeholder="1. Job lands in system from sales...&#10;2. We pull the details from...&#10;3. Then we send it to...&#10;etc."
-                            onchange="autosave()"></textarea>
+                        <label>Work that doesn't show up in any system</label>
+                        <textarea id="hiddenWork" placeholder="E.g., Someone manually tracking in a spreadsheet, work that's undocumented, tasks created by workarounds, 'I'm the only one who knows how this works'" onchange="autosave()"></textarea>
                     </div>
-                    <div class="two-col">
-                        <div class="field-group">
-                            <label>How long does the full cycle take?</label>
-                            <input type="text" id="workflowDuration" placeholder="E.g., 2 hours, 1 day"
-                                onchange="autosave()">
-                        </div>
-                        <div class="field-group">
-                            <label>How often does this happen?</label>
-                            <input type="text" id="workflowFrequency" placeholder="E.g., daily, per customer, weekly"
-                                onchange="autosave()">
-                        </div>
-                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Rework & Error Catching</div>
+                <div class="section-content">
                     <div class="field-group">
-                        <label>Where in the workflow do things slow down or get stuck?</label>
-                        <textarea id="workflowFriction" placeholder="Waiting for info, manual data entry, etc."
-                            onchange="autosave()"></textarea>
+                        <label>Time spent fixing mistakes and catching errors</label>
+                        <textarea id="reworkErrors" placeholder="E.g., Manual QA time, reconciliation tasks, errors that slip through and cause downstream chaos, Friday reconciliation spending" onchange="autosave()"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Communication Breakdowns</div>
+                <div class="section-content">
+                    <div class="field-group">
+                        <label>Where does information get lost or delayed?</label>
+                        <textarea id="commBreakdowns" placeholder="E.g., Finance doesn't know job details until we call, Production finds out about changes from customers, info lost in email chains, constant phone calls for status updates" onchange="autosave()"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Data Quality Issues</div>
+                <div class="section-content">
+                    <div class="field-group">
+                        <label>Garbage in, garbage out problems</label>
+                        <textarea id="dataQuality" placeholder="E.g., Customer data is incomplete/wrong, job details change constantly without system update, multiple versions of truth across systems, incomplete information at source" onchange="autosave()"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Approval & Sign-off Loops</div>
+                <div class="section-content">
+                    <div class="field-group">
+                        <label>Bottlenecks waiting for approvals or sign-offs</label>
+                        <textarea id="approvalLoops" placeholder="E.g., CEO has to approve every estimate, one person's vacation halts everything, single point of failure approvers, how long does approval typically take?" onchange="autosave()"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Context Switching & Interruptions</div>
+                <div class="section-content">
+                    <div class="field-group">
+                        <label>Real-world chaos and multitasking burden</label>
+                        <textarea id="contextSwitching" placeholder="E.g., Can't focus on invoicing because fielding customer calls, Production constantly calls asking 'where's that job?', switching between 8 different tasks per day" onchange="autosave()"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Compliance & Documentation Burden</div>
+                <div class="section-content">
+                    <div class="field-group">
+                        <label>Mandated but painful tasks and overhead</label>
+                        <textarea id="complianceBurden" placeholder="E.g., Have to print and file everything, insurance requires X tracking, audit requirements, documentation overhead that exists because 'we have to'" onchange="autosave()"></textarea>
                     </div>
                 </div>
             </div>
@@ -395,20 +510,15 @@
                 <div class="section-content">
                     <div class="field-group">
                         <label>Complete list of tools/systems they use</label>
-                        <textarea id="toolsList"
-                            placeholder="E.g., Salesforce, Excel, Gmail, Slack, custom app, phone calls, etc."
-                            onchange="autosave()"></textarea>
+                        <textarea id="toolsList" placeholder="E.g., Salesforce, Excel, Gmail, Slack, custom app, phone calls, etc." onchange="autosave()"></textarea>
                     </div>
                     <div class="field-group">
                         <label>Integration gaps (where do they manually move data between systems?)</label>
-                        <textarea id="integrationGaps"
-                            placeholder="E.g., Have to copy from Salesforce into Excel, no connection between invoice system and accounting, etc."
-                            onchange="autosave()"></textarea>
+                        <textarea id="integrationGaps" placeholder="E.g., Have to copy from Salesforce into Excel, no connection between invoice system and accounting, etc." onchange="autosave()"></textarea>
                     </div>
                     <div class="field-group">
                         <label>Tools that are painful or outdated</label>
-                        <textarea id="painfulTools" placeholder="What are they frustrated with?"
-                            onchange="autosave()"></textarea>
+                        <textarea id="painfulTools" placeholder="What are they frustrated with?" onchange="autosave()"></textarea>
                     </div>
                 </div>
             </div>
@@ -418,27 +528,19 @@
                 <div class="section-content">
                     <div class="field-group">
                         <label>Top frustrations / biggest time sinks</label>
-                        <textarea id="topFrustrations"
-                            placeholder="What do they wish they didn't have to do? What slows them down most?"
-                            onchange="autosave()"></textarea>
+                        <textarea id="topFrustrations" placeholder="What do they wish they didn't have to do? What slows them down most?" onchange="autosave()"></textarea>
                     </div>
                     <div class="field-group">
                         <label>Specific pain points (frequency, impact, workarounds)</label>
-                        <textarea id="painPoints"
-                            placeholder="E.g., Manual data entry happens 5x/day, takes 30 min total, causes rework when info changes, currently using Excel as workaround"
-                            onchange="autosave()"></textarea>
+                        <textarea id="painPoints" placeholder="E.g., Manual data entry happens 5x/day, takes 30 min total, causes rework when info changes, currently using Excel as workaround" onchange="autosave()"></textarea>
                     </div>
                     <div class="field-group">
                         <label>Where does this impact other teams?</label>
-                        <textarea id="crossTeamImpact"
-                            placeholder="E.g., Admin delays slow down Production's ability to dispatch, etc."
-                            onchange="autosave()"></textarea>
+                        <textarea id="crossTeamImpact" placeholder="E.g., Admin delays slow down Production's ability to dispatch, etc." onchange="autosave()"></textarea>
                     </div>
                     <div class="field-group">
                         <label>Lost information / visibility issues</label>
-                        <textarea id="visibilityIssues"
-                            placeholder="E.g., Don't know job status until they ask, info scattered across 3 systems, etc."
-                            onchange="autosave()"></textarea>
+                        <textarea id="visibilityIssues" placeholder="E.g., Don't know job status until they ask, info scattered across 3 systems, etc." onchange="autosave()"></textarea>
                     </div>
                 </div>
             </div>
@@ -448,13 +550,10 @@
                 <div class="section-content">
                     <div class="field-group">
                         <label>How are they currently working around the problems?</label>
-                        <textarea id="workarounds"
-                            placeholder="E.g., Using personal spreadsheets, calling each other, manual tracking systems, etc."
-                            onchange="autosave()"></textarea>
+                        <textarea id="workarounds" placeholder="E.g., Using personal spreadsheets, calling each other, manual tracking systems, etc." onchange="autosave()"></textarea>
                     </div>
                     <div class="field-group">
-                        <label>Tribal knowledge (who knows how to do the weird workaround? What if they're not
-                            around?)</label>
+                        <label>Tribal knowledge (who knows how to do the weird workaround? What if they're not around?)</label>
                         <textarea id="tribalKnowledge" placeholder="" onchange="autosave()"></textarea>
                     </div>
                 </div>
@@ -465,9 +564,7 @@
                 <div class="section-content">
                     <div class="field-group">
                         <label>Anything else that stood out? Opportunities? Constraints?</label>
-                        <textarea id="additionalNotes"
-                            placeholder="General observations, mood/attitude, appetite for change, etc."
-                            onchange="autosave()"></textarea>
+                        <textarea id="additionalNotes" placeholder="General observations, mood/attitude, appetite for change, etc." onchange="autosave()"></textarea>
                     </div>
                 </div>
             </div>
@@ -492,6 +589,7 @@
         let currentSessionId = null;
         let sessionData = {};
         let saveTimeout;
+        let draggedWorkflow = null;
 
         sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
@@ -512,7 +610,7 @@
         async function handleLogin() {
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
-
+            
             if (!email || !password) {
                 showAuthError('Please enter email and password');
                 return;
@@ -521,7 +619,7 @@
             try {
                 const { data, error } = await sbClient.auth.signInWithPassword({ email, password });
                 if (error) throw error;
-
+                
                 currentUser = data.user;
                 showMainContent();
                 document.getElementById('sessionDate').valueAsDate = new Date();
@@ -563,7 +661,7 @@
 
         async function loadSession() {
             const date = document.getElementById('sessionDate').value;
-
+            
             try {
                 const { data, error } = await sbClient
                     .from('discovery_sessions')
@@ -575,18 +673,24 @@
                 if (data) {
                     sessionData = data.data || {};
                     populateForm();
+                    renderWorkflows();
                     currentSessionId = data.id;
                 }
             } catch (e) {
                 currentSessionId = null;
+                sessionData = { workflows: [] };
                 clearFormFields();
+                renderWorkflows();
             }
         }
 
         function populateForm() {
             Object.keys(sessionData).forEach(key => {
+                if (key === 'workflows') return; // handled separately
                 const el = document.getElementById(key);
-                if (el) el.value = sessionData[key];
+                if (el && el.tagName !== 'DIV') {
+                    el.value = sessionData[key] || '';
+                }
             });
         }
 
@@ -596,20 +700,150 @@
                     el.value = '';
                 }
             });
+            sessionData.workflows = [];
+        }
+
+        function addWorkflow() {
+            if (!sessionData.workflows) sessionData.workflows = [];
+            const newWorkflow = {
+                id: Date.now(),
+                name: 'New Workflow',
+                handle: 'workflow_' + sessionData.workflows.length,
+                description: '',
+                duration: '',
+                frequency: '',
+                frictionPoints: '',
+                order: sessionData.workflows.length
+            };
+            sessionData.workflows.push(newWorkflow);
+            renderWorkflows();
+            autosave();
+        }
+
+        function deleteWorkflow(id) {
+            if (confirm('Delete this workflow?')) {
+                sessionData.workflows = sessionData.workflows.filter(w => w.id !== id);
+                sessionData.workflows.forEach((w, idx) => w.order = idx);
+                renderWorkflows();
+                autosave();
+            }
+        }
+
+        function renderWorkflows() {
+            const container = document.getElementById('workflowCards');
+            container.innerHTML = '';
+            
+            if (!sessionData.workflows || sessionData.workflows.length === 0) {
+                return;
+            }
+
+            const sorted = [...sessionData.workflows].sort((a, b) => a.order - b.order);
+            
+            sorted.forEach((workflow, idx) => {
+                const card = document.createElement('div');
+                card.className = 'workflow-card';
+                card.draggable = true;
+                card.dataset.id = workflow.id;
+                
+                card.innerHTML = `
+                    <div class="workflow-card-header">
+                        <span class="workflow-handle">⋮⋮</span>
+                        <span class="workflow-name">${workflow.name}</span>
+                        <button type="button" class="workflow-delete" onclick="deleteWorkflow(${workflow.id})">✕</button>
+                    </div>
+                    <div class="workflow-grid">
+                        <div class="workflow-card-field">
+                            <label>Workflow Name</label>
+                            <input type="text" value="${workflow.name}" onchange="updateWorkflowField(${workflow.id}, 'name', this.value); renderWorkflows();" placeholder="E.g., Job Intake">
+                        </div>
+                        <div class="workflow-card-field">
+                            <label>Handle (slug)</label>
+                            <input type="text" value="${workflow.handle}" onchange="updateWorkflowField(${workflow.id}, 'handle', this.value);" placeholder="job_intake">
+                        </div>
+                        <div class="workflow-card-field">
+                            <label>Duration</label>
+                            <input type="text" value="${workflow.duration}" onchange="updateWorkflowField(${workflow.id}, 'duration', this.value);" placeholder="2 hours">
+                        </div>
+                        <div class="workflow-card-field">
+                            <label>Frequency</label>
+                            <input type="text" value="${workflow.frequency}" onchange="updateWorkflowField(${workflow.id}, 'frequency', this.value);" placeholder="daily">
+                        </div>
+                        <div class="workflow-card-field">
+                            <label>Description & Steps</label>
+                            <textarea onchange="updateWorkflowField(${workflow.id}, 'description', this.value);" placeholder="1. Job lands in system...&#10;2. We pull the details...&#10;3. Then send to...">${workflow.description}</textarea>
+                        </div>
+                        <div class="workflow-card-field">
+                            <label>Friction Points</label>
+                            <textarea onchange="updateWorkflowField(${workflow.id}, 'frictionPoints', this.value);" placeholder="Where does it slow down or get stuck?">${workflow.frictionPoints}</textarea>
+                        </div>
+                    </div>
+                `;
+                
+                card.addEventListener('dragstart', (e) => {
+                    draggedWorkflow = workflow.id;
+                    card.classList.add('dragging');
+                });
+                
+                card.addEventListener('dragend', () => {
+                    card.classList.remove('dragging');
+                    document.querySelectorAll('.workflow-card').forEach(c => c.classList.remove('drag-over'));
+                });
+                
+                card.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    if (draggedWorkflow !== workflow.id) {
+                        card.classList.add('drag-over');
+                    }
+                });
+                
+                card.addEventListener('dragleave', () => {
+                    card.classList.remove('drag-over');
+                });
+                
+                card.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    card.classList.remove('drag-over');
+                    
+                    if (draggedWorkflow && draggedWorkflow !== workflow.id) {
+                        const draggedIdx = sessionData.workflows.findIndex(w => w.id === draggedWorkflow);
+                        const dropIdx = sessionData.workflows.findIndex(w => w.id === workflow.id);
+                        
+                        [sessionData.workflows[draggedIdx].order, sessionData.workflows[dropIdx].order] = 
+                        [sessionData.workflows[dropIdx].order, sessionData.workflows[draggedIdx].order];
+                        
+                        renderWorkflows();
+                        autosave();
+                    }
+                });
+                
+                container.appendChild(card);
+            });
+        }
+
+        function updateWorkflowField(id, field, value) {
+            const workflow = sessionData.workflows.find(w => w.id === id);
+            if (workflow) {
+                workflow[field] = value;
+                autosave();
+            }
         }
 
         async function autosave() {
             const date = document.getElementById('sessionDate').value;
             const interviewer = document.getElementById('interviewer').value;
-
+            
             sessionData = {
+                ...sessionData,
                 teamMembers: document.getElementById('teamMembers').value,
                 teamSize: document.getElementById('teamSize').value,
                 keyDependencies: document.getElementById('keyDependencies').value,
-                workflow: document.getElementById('workflow').value,
-                workflowDuration: document.getElementById('workflowDuration').value,
-                workflowFrequency: document.getElementById('workflowFrequency').value,
-                workflowFriction: document.getElementById('workflowFriction').value,
+                hiddenWork: document.getElementById('hiddenWork').value,
+                reworkErrors: document.getElementById('reworkErrors').value,
+                commBreakdowns: document.getElementById('commBreakdowns').value,
+                dataQuality: document.getElementById('dataQuality').value,
+                approvalLoops: document.getElementById('approvalLoops').value,
+                contextSwitching: document.getElementById('contextSwitching').value,
+                complianceBurden: document.getElementById('complianceBurden').value,
                 toolsList: document.getElementById('toolsList').value,
                 integrationGaps: document.getElementById('integrationGaps').value,
                 painfulTools: document.getElementById('painfulTools').value,
@@ -641,7 +875,7 @@
                             data: sessionData
                         })
                         .select();
-
+                    
                     if (data?.[0]) currentSessionId = data[0].id;
                 }
 
@@ -675,6 +909,18 @@
 
         function exportMarkdown() {
             const date = document.getElementById('sessionDate').value;
+            const workflows = (sessionData.workflows || [])
+                .sort((a, b) => a.order - b.order)
+                .map(w => `### ${w.name}
+**Duration:** ${w.duration}
+**Frequency:** ${w.frequency}
+
+${w.description}
+
+**Friction Points:**
+${w.frictionPoints}`)
+                .join('\n\n');
+
             const md = `# Zurix Discovery Session - ${currentTeam.toUpperCase()}
 **Date:** ${date}
 **Interviewer(s):** ${document.getElementById('interviewer').value}
@@ -685,14 +931,29 @@ ${sessionData.teamMembers}
 **Team Size:** ${sessionData.teamSize}
 **Key Dependencies:** ${sessionData.keyDependencies}
 
-## Core Workflow
-${sessionData.workflow}
+## Core Workflows
+${workflows || 'No workflows captured'}
 
-**Duration:** ${sessionData.workflowDuration}
-**Frequency:** ${sessionData.workflowFrequency}
+## Hidden / Invisible Work
+${sessionData.hiddenWork}
 
-**Friction Points:**
-${sessionData.workflowFriction}
+## Rework & Error Catching
+${sessionData.reworkErrors}
+
+## Communication Breakdowns
+${sessionData.commBreakdowns}
+
+## Data Quality Issues
+${sessionData.dataQuality}
+
+## Approval & Sign-off Loops
+${sessionData.approvalLoops}
+
+## Context Switching & Interruptions
+${sessionData.contextSwitching}
+
+## Compliance & Documentation Burden
+${sessionData.complianceBurden}
 
 ## Tools & Technologies
 ${sessionData.toolsList}
@@ -746,5 +1007,4 @@ ${sessionData.additionalNotes}
         }
     </script>
 </body>
-
 </html>
