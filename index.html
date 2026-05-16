@@ -643,15 +643,22 @@
                     .select('*')
                     .eq('team', currentTeam)
                     .eq('session_date', date)
-                    .single();
+                    .maybeSingle();
 
                 if (data) {
                     sessionData = data.data || {};
                     populateForm();
                     renderWorkflows();
                     currentSessionId = data.id;
+                } else {
+                    // No data for this team/date — blank everything
+                    currentSessionId = null;
+                    sessionData = { workflows: [] };
+                    clearFormFields();
+                    renderWorkflows();
                 }
             } catch (e) {
+                console.error('Load session error:', e);
                 currentSessionId = null;
                 sessionData = { workflows: [] };
                 clearFormFields();
