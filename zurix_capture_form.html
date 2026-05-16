@@ -204,6 +204,122 @@
         .btn-secondary:hover {
             background: #d5dbdb;
         }
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 12px;
+            background: #ecf0f1;
+            color: #2c3e50;
+            border: 1px solid #bdc3c7;
+        }
+        .btn-small:hover {
+            background: #d5dbdb;
+        }
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+
+        /* Workflow card styles */
+        .workflows-container {
+            display: grid;
+            gap: 24px;
+        }
+        .workflow-card {
+            border: 2px solid #ecf0f1;
+            border-radius: 6px;
+            padding: 20px;
+            background: #f9f9f9;
+            cursor: grab;
+            transition: all 0.2s;
+        }
+        .workflow-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .workflow-card.dragging {
+            opacity: 0.5;
+            cursor: grabbing;
+        }
+        .workflow-header {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+            margin-bottom: 16px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #bdc3c7;
+        }
+        .workflow-drag-handle {
+            font-size: 20px;
+            color: #7f8c8d;
+            cursor: grab;
+            user-select: none;
+            flex-shrink: 0;
+            padding: 4px 8px;
+        }
+        .workflow-drag-handle:active {
+            cursor: grabbing;
+        }
+        .workflow-title-group {
+            flex: 1;
+            display: grid;
+            gap: 6px;
+        }
+        .workflow-title-group label {
+            font-size: 12px;
+        }
+        .workflow-title-group input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #bdc3c7;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .workflow-title-group input:focus {
+            outline: none;
+            border-color: #3498db;
+            background: #ecf7ff;
+        }
+        .workflow-delete {
+            background: #e74c3c;
+            color: white;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+        .workflow-delete:hover {
+            background: #c0392b;
+        }
+        .workflow-content {
+            display: grid;
+            gap: 16px;
+            padding-left: 32px;
+        }
+        .workflow-divider {
+            height: 3px;
+            background: linear-gradient(90deg, #ecf0f1 0%, #3498db 50%, #ecf0f1 100%);
+            margin: 24px 0;
+            border-radius: 2px;
+        }
+        .add-workflow-btn {
+            margin-top: 16px;
+            padding: 12px 20px;
+            background: #27ae60;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .add-workflow-btn:hover {
+            background: #229954;
+        }
     </style>
 </head>
 <body>
@@ -256,27 +372,9 @@
             </div>
 
             <div class="section">
-                <div class="section-title">Core Workflow</div>
-                <div class="section-content">
-                    <div class="field-group">
-                        <label>Typical workflow / job cycle (step-by-step)</label>
-                        <textarea id="workflow" placeholder="1. Job lands in system from sales...&#10;2. We pull the details from...&#10;3. Then we send it to...&#10;etc." onchange="autosave()"></textarea>
-                    </div>
-                    <div class="two-col">
-                        <div class="field-group">
-                            <label>How long does the full cycle take?</label>
-                            <input type="text" id="workflowDuration" placeholder="E.g., 2 hours, 1 day" onchange="autosave()">
-                        </div>
-                        <div class="field-group">
-                            <label>How often does this happen?</label>
-                            <input type="text" id="workflowFrequency" placeholder="E.g., daily, per customer, weekly" onchange="autosave()">
-                        </div>
-                    </div>
-                    <div class="field-group">
-                        <label>Where in the workflow do things slow down or get stuck?</label>
-                        <textarea id="workflowFriction" placeholder="Waiting for info, manual data entry, etc." onchange="autosave()"></textarea>
-                    </div>
-                </div>
+                <div class="section-title">Core Workflows</div>
+                <div class="workflows-container" id="workflowsContainer"></div>
+                <button class="add-workflow-btn" onclick="addWorkflow()">+ Add Workflow</button>
             </div>
 
             <div class="section">
@@ -355,11 +453,14 @@
 
     <script>
         let currentTeam = 'admin';
-        let sessionData = {};
+        let workflows = [];
+        let workflowCounter = 1;
+        let draggedElement = null;
         let saveTimeout;
 
         window.addEventListener('load', () => {
             document.getElementById('sessionDate').valueAsDate = new Date();
+            addWorkflow();
         });
 
         function selectTeam(team) {
@@ -373,15 +474,112 @@
             saveTimeout = setTimeout(autosave, 500);
         }
 
+        function addWorkflow() {
+            const workflow = {
+                id: Date.now(),
+                title: `Workflow ${workflowCounter}`,
+                stepByStep: '',
+                duration: '',
+                frequency: '',
+                friction: ''
+            };
+            workflows.push(workflow);
+            workflowCounter++;
+            renderWorkflows();
+            autosave();
+        }
+
+        function deleteWorkflow(id) {
+            workflows = workflows.filter(w => w.id !== id);
+            renderWorkflows();
+            autosave();
+        }
+
+        function renderWorkflows() {
+            const container = document.getElementById('workflowsContainer');
+            container.innerHTML = workflows.map((workflow, idx) => `
+                <div class="workflow-card" draggable="true" data-id="${workflow.id}" ondragstart="handleDragStart(event)" ondragend="handleDragEnd(event)" ondragover="handleDragOver(event)" ondrop="handleDrop(event, ${idx})">
+                    <div class="workflow-header">
+                        <span class="workflow-drag-handle">≡</span>
+                        <div class="workflow-title-group">
+                            <label>Workflow Title</label>
+                            <input type="text" value="${workflow.title}" onchange="updateWorkflowField(${workflow.id}, 'title', this.value)">
+                        </div>
+                        <button class="workflow-delete" onclick="deleteWorkflow(${workflow.id})">Delete</button>
+                    </div>
+                    
+                    <div class="workflow-content">
+                        <div class="field-group">
+                            <label>Step-by-step workflow (what happens from start to finish?)</label>
+                            <textarea placeholder="1. Step lands in system...&#10;2. We pull details from...&#10;3. Then we send to...&#10;etc." onchange="updateWorkflowField(${workflow.id}, 'stepByStep', this.value)">${workflow.stepByStep}</textarea>
+                        </div>
+                        
+                        <div class="two-col">
+                            <div class="field-group">
+                                <label>How long does this cycle take?</label>
+                                <input type="text" placeholder="E.g., 2 hours, 1 day" value="${workflow.duration}" onchange="updateWorkflowField(${workflow.id}, 'duration', this.value)">
+                            </div>
+                            <div class="field-group">
+                                <label>How often does this happen?</label>
+                                <input type="text" placeholder="E.g., daily, per customer, weekly" value="${workflow.frequency}" onchange="updateWorkflowField(${workflow.id}, 'frequency', this.value)">
+                            </div>
+                        </div>
+                        
+                        <div class="field-group">
+                            <label>Where does it slow down or get stuck?</label>
+                            <textarea placeholder="Waiting for info, manual data entry, approval loops, etc." onchange="updateWorkflowField(${workflow.id}, 'friction', this.value)">${workflow.friction}</textarea>
+                        </div>
+                    </div>
+                    ${workflows.length > 1 ? '<div class="workflow-divider"></div>' : ''}
+                </div>
+            `).join('');
+        }
+
+        function updateWorkflowField(id, field, value) {
+            const workflow = workflows.find(w => w.id === id);
+            if (workflow) {
+                workflow[field] = value;
+                autosave();
+            }
+        }
+
+        function handleDragStart(e) {
+            draggedElement = e.target.closest('.workflow-card');
+            draggedElement.classList.add('dragging');
+        }
+
+        function handleDragEnd(e) {
+            draggedElement.classList.remove('dragging');
+            draggedElement = null;
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+        }
+
+        function handleDrop(e, targetIdx) {
+            e.preventDefault();
+            if (!draggedElement) return;
+            
+            const draggedId = parseInt(draggedElement.dataset.id);
+            const draggedIdx = workflows.findIndex(w => w.id === draggedId);
+            
+            if (draggedIdx !== targetIdx) {
+                const dragged = workflows[draggedIdx];
+                workflows.splice(draggedIdx, 1);
+                workflows.splice(targetIdx, 0, dragged);
+                renderWorkflows();
+                autosave();
+            }
+        }
+
         async function autosave() {
             const data = {
                 teamMembers: document.getElementById('teamMembers').value,
                 teamSize: document.getElementById('teamSize').value,
                 keyDependencies: document.getElementById('keyDependencies').value,
-                workflow: document.getElementById('workflow').value,
-                workflowDuration: document.getElementById('workflowDuration').value,
-                workflowFrequency: document.getElementById('workflowFrequency').value,
-                workflowFriction: document.getElementById('workflowFriction').value,
+                workflows: workflows,
                 toolsList: document.getElementById('toolsList').value,
                 integrationGaps: document.getElementById('integrationGaps').value,
                 painfulTools: document.getElementById('painfulTools').value,
@@ -420,10 +618,7 @@
                     teamMembers: document.getElementById('teamMembers').value,
                     teamSize: document.getElementById('teamSize').value,
                     keyDependencies: document.getElementById('keyDependencies').value,
-                    workflow: document.getElementById('workflow').value,
-                    workflowDuration: document.getElementById('workflowDuration').value,
-                    workflowFrequency: document.getElementById('workflowFrequency').value,
-                    workflowFriction: document.getElementById('workflowFriction').value,
+                    workflows: workflows,
                     toolsList: document.getElementById('toolsList').value,
                     integrationGaps: document.getElementById('integrationGaps').value,
                     painfulTools: document.getElementById('painfulTools').value,
@@ -441,6 +636,18 @@
 
         function exportMarkdown() {
             const date = document.getElementById('sessionDate').value;
+            const workflowsMarkdown = workflows.map((w, idx) => `
+### Workflow ${idx + 1}: ${w.title}
+**Step-by-step:**
+${w.stepByStep}
+
+**Duration:** ${w.duration}
+**Frequency:** ${w.frequency}
+
+**Friction Points:**
+${w.friction}
+`).join('\n---\n');
+
             const md = `# Zurix Discovery Session - ${currentTeam.toUpperCase()}
 **Date:** ${date}
 **Interviewer(s):** ${document.getElementById('interviewer').value}
@@ -451,14 +658,8 @@ ${document.getElementById('teamMembers').value}
 **Team Size:** ${document.getElementById('teamSize').value}
 **Key Dependencies:** ${document.getElementById('keyDependencies').value}
 
-## Core Workflow
-${document.getElementById('workflow').value}
-
-**Duration:** ${document.getElementById('workflowDuration').value}
-**Frequency:** ${document.getElementById('workflowFrequency').value}
-
-**Friction Points:**
-${document.getElementById('workflowFriction').value}
+## Core Workflows
+${workflowsMarkdown}
 
 ## Tools & Technologies
 ${document.getElementById('toolsList').value}
@@ -509,6 +710,9 @@ ${document.getElementById('additionalNotes').value}
                 document.querySelectorAll('textarea, input[type="text"]').forEach(el => {
                     if (el.id !== 'sessionDate') el.value = '';
                 });
+                workflows = [];
+                workflowCounter = 1;
+                addWorkflow();
                 autosave();
             }
         }
