@@ -79,29 +79,6 @@
             border-color: #3498db;
             background: #ecf7ff;
         }
-        .team-selector {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-        .team-btn {
-            padding: 8px 16px;
-            border: 2px solid #bdc3c7;
-            background: white;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: 500;
-            font-size: 13px;
-            transition: all 0.2s;
-        }
-        .team-btn:hover {
-            border-color: #3498db;
-        }
-        .team-btn.active {
-            background: #3498db;
-            color: white;
-            border-color: #3498db;
-        }
         .section {
             margin-bottom: 32px;
         }
@@ -390,11 +367,11 @@
             <div class="controls">
                 <div class="control-group">
                     <label>Team</label>
-                    <div class="team-selector">
-                        <button class="team-btn active" onclick="selectTeam('admin')">Admin</button>
-                        <button class="team-btn" onclick="selectTeam('service')">Service</button>
-                        <button class="team-btn" onclick="selectTeam('production')">Production</button>
-                    </div>
+                    <select id="teamSelect" onchange="selectTeam(this.value)">
+                        <option value="admin" selected>Admin</option>
+                        <option value="service">Service</option>
+                        <option value="production">Production</option>
+                    </select>
                 </div>
                 <div class="control-group">
                     <label>Date</label>
@@ -649,8 +626,6 @@
 
         function selectTeam(team) {
             currentTeam = team;
-            document.querySelectorAll('.team-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
             loadSession();
         }
 
