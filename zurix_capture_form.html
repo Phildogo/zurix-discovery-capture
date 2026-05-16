@@ -80,29 +80,6 @@
             border-color: #3498db;
             background: #ecf7ff;
         }
-        .team-selector {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-        .team-btn {
-            padding: 8px 16px;
-            border: 2px solid #bdc3c7;
-            background: white;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: 500;
-            font-size: 13px;
-            transition: all 0.2s;
-        }
-        .team-btn:hover {
-            border-color: #3498db;
-        }
-        .team-btn.active {
-            background: #3498db;
-            color: white;
-            border-color: #3498db;
-        }
         .section {
             margin-bottom: 32px;
         }
@@ -179,6 +156,7 @@
             border-top: 2px solid #ecf0f1;
             display: flex;
             gap: 12px;
+            flex-wrap: wrap;
         }
         .btn {
             padding: 10px 20px;
@@ -204,16 +182,6 @@
         .btn-secondary:hover {
             background: #d5dbdb;
         }
-        .btn-small {
-            padding: 6px 12px;
-            font-size: 12px;
-            background: #ecf0f1;
-            color: #2c3e50;
-            border: 1px solid #bdc3c7;
-        }
-        .btn-small:hover {
-            background: #d5dbdb;
-        }
         .btn-danger {
             background: #e74c3c;
             color: white;
@@ -222,7 +190,6 @@
             background: #c0392b;
         }
 
-        /* Workflow card styles */
         .workflows-container {
             display: grid;
             gap: 24px;
@@ -300,12 +267,6 @@
             gap: 16px;
             padding-left: 32px;
         }
-        .workflow-divider {
-            height: 3px;
-            background: linear-gradient(90deg, #ecf0f1 0%, #3498db 50%, #ecf0f1 100%);
-            margin: 24px 0;
-            border-radius: 2px;
-        }
         .add-workflow-btn {
             margin-top: 16px;
             padding: 12px 20px;
@@ -335,11 +296,11 @@
             <div class="controls">
                 <div class="control-group">
                     <label>Team</label>
-                    <div class="team-selector">
-                        <button class="team-btn active" onclick="selectTeam('admin')">Admin</button>
-                        <button class="team-btn" onclick="selectTeam('service')">Service</button>
-                        <button class="team-btn" onclick="selectTeam('production')">Production</button>
-                    </div>
+                    <select id="teamSelect" onchange="selectTeam(this.value)">
+                        <option value="admin">Admin</option>
+                        <option value="service">Service</option>
+                        <option value="production">Production</option>
+                    </select>
                 </div>
                 <div class="control-group">
                     <label>Date</label>
@@ -378,11 +339,81 @@
             </div>
 
             <div class="section">
+                <div class="section-title">Hidden / Invisible Work</div>
+                <div class="section-content">
+                    <div class="field-group">
+                        <label>Work that happens but doesn't show up in any system</label>
+                        <textarea id="hiddenWork" placeholder="E.g., Someone tracks X in their head, work that exists because of workarounds, tribal knowledge, 'I'm the only one who knows how to do this', manual reconciliation, etc." onchange="autosave()"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Rework & Error Catching</div>
+                <div class="section-content">
+                    <div class="field-group">
+                        <label>How much time is spent fixing mistakes or catching errors?</label>
+                        <textarea id="rework" placeholder="E.g., We QA everything by hand, errors slip through causing downstream chaos, Friday reconciliation takes 2 hours because data was entered wrong, duplicate entries, etc." onchange="autosave()"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Communication Breakdowns</div>
+                <div class="section-content">
+                    <div class="field-group">
+                        <label>Where does information get lost or miscommunicated?</label>
+                        <textarea id="communication" placeholder="E.g., Finance doesn't know what's on a job until we call them, Production finds out about changes from customers not us, info gets lost in email chains, no visibility across teams, etc." onchange="autosave()"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Data Quality Issues</div>
+                <div class="section-content">
+                    <div class="field-group">
+                        <label>Where is data incomplete, wrong, or inconsistent?</label>
+                        <textarea id="dataQuality" placeholder="E.g., Customer data is incomplete/outdated, job details change constantly and no one updates the system, 5 versions of the customer list floating around, duplicate entries, outdated contact info, etc." onchange="autosave()"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Approval/Sign-off Bottlenecks</div>
+                <div class="section-content">
+                    <div class="field-group">
+                        <label>Where does work get stuck waiting for approvals or sign-offs?</label>
+                        <textarea id="approvals" placeholder="E.g., CEO has to approve every estimate, one person's vacation halts everything, waiting for Finance to approve, single person who can authorize X, etc." onchange="autosave()"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Context Switching & Interruptions</div>
+                <div class="section-content">
+                    <div class="field-group">
+                        <label>How much time is lost to task switching and interruptions?</label>
+                        <textarea id="contextSwitching" placeholder="E.g., Can't focus on invoicing because fielding customer calls, Production calls constantly asking where's that job, switch between 8 different tasks per day, phone rings all day interrupting focus work, etc." onchange="autosave()"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Compliance & Documentation Burden</div>
+                <div class="section-content">
+                    <div class="field-group">
+                        <label>What compliance or documentation requirements feel like overhead?</label>
+                        <textarea id="compliance" placeholder="E.g., Have to print and file everything, insurance requires X tracking but painful, regulatory requirements, redundant documentation, manual record-keeping, etc." onchange="autosave()"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
                 <div class="section-title">Tools & Technologies</div>
                 <div class="section-content">
                     <div class="field-group">
                         <label>Complete list of tools/systems they use</label>
-                        <textarea id="toolsList" placeholder="E.g., Salesforce, Excel, Gmail, Slack, custom app, phone calls, etc." onchange="autosave()"></textarea>
+                        <textarea id="toolsList" placeholder="E.g., Salesforce, Excel, Gmail, Slack, custom app, phone calls, paper, etc." onchange="autosave()"></textarea>
                     </div>
                     <div class="field-group">
                         <label>Integration gaps (where do they manually move data between systems?)</label>
@@ -435,7 +466,7 @@
                 <div class="section-title">Additional Notes</div>
                 <div class="section-content">
                     <div class="field-group">
-                        <label>Anything else that stood out? Opportunities? Constraints?</label>
+                        <label>Anything else that stood out? Opportunities? Constraints? Team attitude toward change?</label>
                         <textarea id="additionalNotes" placeholder="General observations, mood/attitude, appetite for change, etc." onchange="autosave()"></textarea>
                     </div>
                 </div>
@@ -465,8 +496,7 @@
 
         function selectTeam(team) {
             currentTeam = team;
-            document.querySelectorAll('.team-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
+            document.getElementById('teamSelect').value = team;
         }
 
         function updateSession() {
@@ -530,7 +560,6 @@
                             <textarea placeholder="Waiting for info, manual data entry, approval loops, etc." onchange="updateWorkflowField(${workflow.id}, 'friction', this.value)">${workflow.friction}</textarea>
                         </div>
                     </div>
-                    ${workflows.length > 1 ? '<div class="workflow-divider"></div>' : ''}
                 </div>
             `).join('');
         }
@@ -580,6 +609,13 @@
                 teamSize: document.getElementById('teamSize').value,
                 keyDependencies: document.getElementById('keyDependencies').value,
                 workflows: workflows,
+                hiddenWork: document.getElementById('hiddenWork').value,
+                rework: document.getElementById('rework').value,
+                communication: document.getElementById('communication').value,
+                dataQuality: document.getElementById('dataQuality').value,
+                approvals: document.getElementById('approvals').value,
+                contextSwitching: document.getElementById('contextSwitching').value,
+                compliance: document.getElementById('compliance').value,
                 toolsList: document.getElementById('toolsList').value,
                 integrationGaps: document.getElementById('integrationGaps').value,
                 painfulTools: document.getElementById('painfulTools').value,
@@ -619,6 +655,13 @@
                     teamSize: document.getElementById('teamSize').value,
                     keyDependencies: document.getElementById('keyDependencies').value,
                     workflows: workflows,
+                    hiddenWork: document.getElementById('hiddenWork').value,
+                    rework: document.getElementById('rework').value,
+                    communication: document.getElementById('communication').value,
+                    dataQuality: document.getElementById('dataQuality').value,
+                    approvals: document.getElementById('approvals').value,
+                    contextSwitching: document.getElementById('contextSwitching').value,
+                    compliance: document.getElementById('compliance').value,
                     toolsList: document.getElementById('toolsList').value,
                     integrationGaps: document.getElementById('integrationGaps').value,
                     painfulTools: document.getElementById('painfulTools').value,
@@ -660,6 +703,27 @@ ${document.getElementById('teamMembers').value}
 
 ## Core Workflows
 ${workflowsMarkdown}
+
+## Hidden / Invisible Work
+${document.getElementById('hiddenWork').value}
+
+## Rework & Error Catching
+${document.getElementById('rework').value}
+
+## Communication Breakdowns
+${document.getElementById('communication').value}
+
+## Data Quality Issues
+${document.getElementById('dataQuality').value}
+
+## Approval/Sign-off Bottlenecks
+${document.getElementById('approvals').value}
+
+## Context Switching & Interruptions
+${document.getElementById('contextSwitching').value}
+
+## Compliance & Documentation Burden
+${document.getElementById('compliance').value}
 
 ## Tools & Technologies
 ${document.getElementById('toolsList').value}
